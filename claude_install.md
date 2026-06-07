@@ -4,6 +4,52 @@
 
 ---
 
+## 项目定位
+
+**kernel-design-agents** 不是 `.claude/agents/` 形式的 agent 配置文件，而是一套 **agent 驱动的 CUDA kernel 开发工作流**。它定义了"如何让 AI agent 高效地研究、实现、验证和迭代高性能 kernel"的方法论。
+
+核心思想：把 kernel 开发拆成可重复的循环 — **定义合约 → 写计划 → 小步实现 → 每步验证 → 记录证据 → 推广或拒绝候选方案**。
+
+### 与 Claude Code 的集成方式
+
+| 组件 | 集成机制 | 说明 |
+|------|---------|------|
+| `CLAUDE.md` | **自动加载** — Claude Code 启动时读取当前仓库的 CLAUDE.md 作为系统指令 | 注入项目规则和工作流约束 |
+| `prompts/basic-flow.md` | **手动输入** — 用户将模板内容贴给 Claude，填入任务合约 | 结构化 prompt，定义任务目标和流程步骤 |
+| `skills/` | **需要安装** — 链接到 `~/.claude/skills/` 后自动发现 | 提供 domain knowledge（性能分析、硬件优化知识） |
+
+三者配合的效果：Claude Code 在 kernel 开发任务中遵循"计划 → 实现 → 验证 → 记录证据"的工程化流程，而不是随意修改代码。
+
+### 工作流概览
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  kernel-design-agents 仓库（参考材料，不直接改）          │
+│                                                         │
+│  CLAUDE.md              ← 自动注入的 agent 指令          │
+│  prompts/basic-flow.md  ← 任务合约 + 工作流模板          │
+│  skills/                ← domain skills（需安装）         │
+│    ├─ ncu-report-skill    (Nsight Compute 分析)          │
+│    ├─ nsys-profile-skill  (Nsight Systems 分析)          │
+│    └─ KernelWiki          (Blackwell/Hopper 知识)        │
+└─────────────────────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│  你的任务工作区（实际实现在这里）                          │
+│                                                         │
+│  docs/draft.md     ← agent 写的计划草案                  │
+│  docs/plan.md      ← 可执行计划                          │
+│  candidates.jsonl  ← 候选方案记录                         │
+│  benchmark.csv     ← 性能数据                            │
+│  profile/          ← profiling 证据                      │
+└─────────────────────────────────────────────────────────┘
+```
+
+**使用方式**：在你的任务工作区中启动 Claude Code，把 `prompts/basic-flow.md` 的内容贴给 Claude 并填入任务合约。Claude 会自动加载 CLAUDE.md 的规则，按流程推进。需要性能分析或硬件知识时，skill 会被自动触发或手动调用。
+
+---
+
 ## 项目组件一览
 
 | 组件 | 类型 | 说明 |
