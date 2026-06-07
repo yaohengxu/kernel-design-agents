@@ -31,6 +31,8 @@ Links the cloned skill directories into Claude Code's discovery path. Changes to
 mkdir -p ~/.claude/skills
 ln -s "$(pwd)/skills/ncu-report-skill" ~/.claude/skills/ncu-report-skill
 ln -s "$(pwd)/skills/KernelWiki" ~/.claude/skills/KernelWiki
+ln -s "$(pwd)/skills/nsys-profile-skill" ~/.claude/skills/nsys-profile-skill
+ln -s "$(pwd)/skills/inference-bench-skill" ~/.claude/skills/inference-bench-skill
 ```
 
 ### Method B — Project-level Symlink
@@ -41,6 +43,8 @@ Scoped to this repository only. Useful when different projects need different sk
 mkdir -p .claude/skills
 ln -s "$(pwd)/skills/ncu-report-skill" .claude/skills/ncu-report-skill
 ln -s "$(pwd)/skills/KernelWiki" .claude/skills/KernelWiki
+ln -s "$(pwd)/skills/nsys-profile-skill" .claude/skills/nsys-profile-skill
+ln -s "$(pwd)/skills/inference-bench-skill" .claude/skills/inference-bench-skill
 ```
 
 ### Method C — Standalone Clone
@@ -51,6 +55,9 @@ Clone skills directly into `~/.claude/skills/`. No symlink needed, but updates r
 mkdir -p ~/.claude/skills
 git clone git@github.com:yaohengxu/ncu-report-skill.git ~/.claude/skills/ncu-report-skill
 git clone git@github.com:yaohengxu/KernelWiki.git ~/.claude/skills/KernelWiki
+# nsys-profile-skill and inference-bench-skill are in the kernel-design-agents repo
+cp -r skills/nsys-profile-skill ~/.claude/skills/
+cp -r skills/inference-bench-skill ~/.claude/skills/
 ```
 
 ## KernelWiki Dependencies
@@ -117,9 +124,12 @@ git init
 claude
 
 # In the session, paste the filled-in prompt from prompts/basic-flow.md
+# Or for LLM inference optimization, use prompts/inference-optimize-flow.md
 # Or invoke skills directly:
-#   /ncu-report-skill   — CUDA kernel profiling
-#   /KernelWiki          — Blackwell/Hopper optimization knowledge base
+#   /ncu-report-skill        — CUDA kernel profiling
+#   /nsys-profile-skill      — application-level profiling
+#   /inference-bench-skill   — LLM inference optimization
+#   /KernelWiki              — Blackwell/Hopper optimization knowledge base
 ```
 
 ## Repository Structure
@@ -138,10 +148,18 @@ kernel-design-agents/
     │   ├── SKILL.md
     │   ├── helpers/
     │   └── reference/
-    └── KernelWiki/            ← kernel optimization wiki (submodule)
+    ├── KernelWiki/            ← kernel optimization wiki (submodule)
+    │   ├── SKILL.md
+    │   ├── scripts/
+    │   └── wiki/
+    ├── nsys-profile-skill/    ← application-level profiling skill
+    │   ├── SKILL.md
+    │   ├── helpers/
+    │   └── reference/
+    └── inference-bench-skill/ ← LLM inference optimization skill
         ├── SKILL.md
-        ├── scripts/
-        └── wiki/
+        ├── helpers/
+        └── reference/
 ```
 
 ## Troubleshooting

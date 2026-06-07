@@ -9,6 +9,7 @@ The templates are intentionally task-agnostic. Fill in the task objective, const
 | Path | Purpose |
 |---|---|
 | `basic-flow.md` | Minimal prompt for research, planning, implementation, validation, and iteration. |
+| `inference-optimize-flow.md` | LLM inference performance optimization: benchmark → profile → optimize → verify. |
 
 ## How To Use
 

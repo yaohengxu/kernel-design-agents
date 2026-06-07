@@ -59,6 +59,7 @@
 | `skills/ncu-report-skill` | Skill (子仓库) | Nsight Compute 内核级性能分析 |
 | `skills/KernelWiki` | Skill (子仓库) | Blackwell/Hopper 内核优化知识库 |
 | `skills/nsys-profile-skill` | Skill | Nsight Systems 应用级性能分析 |
+| `skills/inference-bench-skill` | Skill | LLM 推理性能 benchmark 与瓶颈分析 |
 
 ---
 
@@ -90,6 +91,7 @@ mkdir -p ~/.claude/skills
 ln -s "$(pwd)/skills/ncu-report-skill" ~/.claude/skills/ncu-report-skill
 ln -s "$(pwd)/skills/KernelWiki" ~/.claude/skills/KernelWiki
 ln -s "$(pwd)/skills/nsys-profile-skill" ~/.claude/skills/nsys-profile-skill
+ln -s "$(pwd)/skills/inference-bench-skill" ~/.claude/skills/inference-bench-skill
 ```
 
 验证：
@@ -110,6 +112,7 @@ git clone git@github.com:yaohengxu/KernelWiki.git
 
 # 本项目内置 skill — 需要从 kernel-design-agents 复制
 cp -r /path/to/kernel-design-agents/skills/nsys-profile-skill .
+cp -r /path/to/kernel-design-agents/skills/inference-bench-skill .
 ```
 
 ### 方式三：项目级安装（仅对特定仓库生效）
@@ -122,6 +125,7 @@ mkdir -p .claude/skills
 ln -s /path/to/kernel-design-agents/skills/ncu-report-skill .claude/skills/ncu-report-skill
 ln -s /path/to/kernel-design-agents/skills/KernelWiki .claude/skills/KernelWiki
 ln -s /path/to/kernel-design-agents/skills/nsys-profile-skill .claude/skills/nsys-profile-skill
+ln -s /path/to/kernel-design-agents/skills/inference-bench-skill .claude/skills/inference-bench-skill
 ```
 
 ---
@@ -153,14 +157,21 @@ Available skills:
 |-------|---------|---------|
 | **ncu-report-skill** | 单个 kernel 的性能分析 | "profile 这个 kernel"、"为什么这个 kernel 慢"、"ncu 报告怎么看" |
 | **nsys-profile-skill** | 应用整体性能分析 | "GPU 利用率为什么低"、"CPU 和 GPU 有没有重叠"、"nsys 分析一下" |
+| **inference-bench-skill** | LLM 推理性能优化 | "推理为什么慢"、"tokens/s 上不去"、"TTFT 太高"、"benchmark 一下" |
 | **KernelWiki** | Blackwell/Hopper 内核优化知识 | "tcgen05 怎么用"、"FlashAttention-4 优化"、"Triton on Blackwell" |
 
 ### 典型工作流
 
 ```
+通用 kernel 优化：
 1. nsys-profile-skill  →  找到应用级瓶颈（哪个 kernel 占时最多、有无 gap）
 2. ncu-report-skill    →  深入分析具体 kernel（memory-bound? compute-bound?）
 3. KernelWiki          →  查找优化方案和最佳实践
+
+LLM 推理优化：
+1. inference-bench-skill →  benchmark → nsys → ncu → 优化 → 验证
+2. ncu-report-skill      →  对瓶颈 kernel 做深入分析
+3. KernelWiki            →  查找推理相关 kernel 优化知识
 ```
 
 ---
@@ -173,15 +184,22 @@ Available skills:
 # 在你的实现工作区中启动 Claude Code
 cd /path/to/your-implementation-workspace
 
-# 将 prompts/basic-flow.md 的内容作为 prompt 输入
-# 或直接引用文件路径
+# 将 prompts/ 下的模板内容作为 prompt 输入
 ```
 
-`prompts/basic-flow.md` 定义了完整的 kernel 开发流程：
+### 通用 kernel 开发：`prompts/basic-flow.md`
 1. 定义任务合约（目标、约束、验证命令）
 2. 编写计划草案到 `docs/draft.md`
 3. 小步迭代实现，每步验证
 4. 记录候选方案、benchmark 结果、profiling 证据
+
+### LLM 推理优化：`prompts/inference-optimize-flow.md`
+1. 填入框架、模型、硬件、目标指标
+2. 运行 baseline benchmark
+3. nsys profile 找到 Top 瓶颈 kernel
+4. ncu 深入分析瓶颈类型
+5. 选择优化方案（量化、FlashAttention、batch 调优...）
+6. 实现 → 重新 benchmark → 对比
 
 ---
 

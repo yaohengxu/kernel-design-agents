@@ -48,3 +48,18 @@ The exact format is less important than consistency. A future reader should be a
 ## Promotion Rule
 
 Promote a candidate only when it satisfies the task contract and has evidence that it improves or preserves the target metric. If a candidate is rejected, record the reason instead of silently discarding it.
+
+---
+
+## LLM Inference Optimization Variant
+
+For LLM inference performance tasks, the loop specializes to:
+
+1. **Baseline benchmark** — run the framework's benchmark tool, record tokens/sec, TTFT, ITL.
+2. **nsys profile** — trace the inference run, identify Top-3 kernels by wall-clock time.
+3. **ncu profile** — deep-dive into the top kernel, classify as memory/compute/latency-bound.
+4. **Optimize** — apply targeted fix (quantization, FlashAttention, batch tuning, kernel fusion).
+5. **Re-benchmark** — compare with baseline, record in `benchmark.csv`.
+6. **Promote or iterate** — if target met, promote. Otherwise, profile again for the next bottleneck.
+
+Use `prompts/inference-optimize-flow.md` as the starter prompt. Use `inference-bench-skill` for profiling and analysis tools.

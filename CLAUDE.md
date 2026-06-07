@@ -31,3 +31,16 @@ Use external skills only when they are relevant to the active task:
 - `humanize` for plan generation and implementation loops.
 - A domain knowledge skill for background research.
 - A profiling or report-analysis skill for performance evidence.
+- `inference-bench-skill` for LLM inference performance optimization.
+
+## LLM Inference Optimization Rules
+
+When working on LLM inference performance tasks, additionally follow these rules:
+
+- Always benchmark before optimizing. Never guess performance bottlenecks.
+- Use `inference-bench-skill` workflow: benchmark → nsys profile → ncu profile → optimize → verify.
+- Quantify all performance metrics: tokens/sec, TTFT (ms), ITL (ms), GPU utilization (%), memory bandwidth (GB/s).
+- Record baseline and optimized numbers in `benchmark.csv` with exact commands used.
+- Each optimization must have profiling evidence (nsys/ncu report citations or metric values).
+- Distinguish prefill (compute-bound) from decode (memory-bound) — they require different optimizations.
+- Use `prompts/inference-optimize-flow.md` as the starter prompt for inference optimization tasks.

@@ -11,6 +11,7 @@ This repository documents the early research prototype and is still under active
 | `docs/agent-flow.md` | Minimal end-to-end KDA workflow. |
 | `prompts/README.md` | How to use prompt templates. |
 | `prompts/basic-flow.md` | Generic starter prompt for a new task. |
+| `prompts/inference-optimize-flow.md` | LLM inference optimization starter prompt. |
 | `CLAUDE.md` | Repository-facing agent instructions. |
 
 ## Getting Started
@@ -24,6 +25,8 @@ cd kernel-design-agents
 mkdir -p ~/.claude/skills
 ln -s "$(pwd)/skills/ncu-report-skill" ~/.claude/skills/ncu-report-skill
 ln -s "$(pwd)/skills/KernelWiki" ~/.claude/skills/KernelWiki
+ln -s "$(pwd)/skills/nsys-profile-skill" ~/.claude/skills/nsys-profile-skill
+ln -s "$(pwd)/skills/inference-bench-skill" ~/.claude/skills/inference-bench-skill
 
 # or clone skills directly
 mkdir -p ~/.claude/skills && cd ~/.claude/skills
